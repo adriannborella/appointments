@@ -2,17 +2,13 @@
 
 ## Starting
 
-go to devops folder
+### deploy.sh
+This script set some enviroment variables and execute the docker compose command to deploy the project
 
-```
-cd devops
-```
+It has 2 parameters
+* e = The enviroment name. Posible options [local - production - qa - ci]
+* c = command which is going to be executed
 
-Execute docker-compose up
-
-```
-docker-compose up
-```
 
 ## Config Debug
 
