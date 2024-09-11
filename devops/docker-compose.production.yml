@@ -1,0 +1,70 @@
+version: '3'
+name: appointments
+services:
+  # front:
+  #   build:
+  #     context: ../../../src/client
+  #     dockerfile: ./Dockerfile
+  #   command: yarn start
+  #   env_file:
+  #     - ../../../src/client/react.env
+  #   # network_mode: host
+  #   ports:
+  #     - 11003:3000
+  #   volumes:
+  #     - ../../../src/client/src:/home/app/react
+  #   stdin_open: true
+  web:
+    image: $AP_WEB_IMAGE
+    entrypoint: ['/cache/entrypoint.sh']
+    command: gunicorn --bind 0.0.0.0:5000 -w 8 src.wsgi:application
+    depends_on:
+      - db
+      - web_migrate
+      - web_collectstatic
+    env_file:
+      - ./web.env
+    volumes:
+      - static_volume_prod:/opt/appointments/static
+      - media_volume_prod:/opt/appointments/media
+    restart: always
+  web_migrate:
+    image: $AP_WEB_IMAGE
+    entrypoint: ['/cache/entrypoint.sh']
+    command: python manage.py migrate
+    depends_on:
+      - db
+    env_file:
+      - ./web.env
+  web_collectstatic:
+    image: $AP_WEB_IMAGE
+    entrypoint: ['/cache/entrypoint.sh']
+    command: python manage.py collectstatic --clear --no-input
+    depends_on:
+      - db
+    env_file:
+      - ./web.env
+    volumes:
+      - static_volume_prod:/opt/appointments/static
+      - media_volume_prod:/opt/appointments/media
+  db:
+    image: 'postgres:15.3-alpine'
+    env_file:
+      - ./db.env
+    volumes:
+      - postgres_volume_prod:/var/lib/mysql
+    restart: always
+  lb:
+    image: $AP_LB_IMAGE
+    ports:
+      - 11120:80
+    volumes:
+      - static_volume_prod:/home/app/static
+      - media_volume_prod:/home/app/media
+    depends_on:
+      - web
+    restart: always
+volumes:
+  postgres_volume_prod:
+  static_volume_prod:
+  media_volume_prod:

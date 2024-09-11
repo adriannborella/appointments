@@ -1,0 +1,46 @@
+services:
+  # front:
+  #   build:
+  #     context: ../../../src/client
+  #     dockerfile: ./Dockerfile
+  #   command: yarn start
+  #   env_file:
+  #     - ./front.env
+  #   # network_mode: host
+  #   ports:
+  #     - 11003:3000
+  #   volumes:
+  #     - ../../../src/client/src:/home/app/react
+  web:
+    build:
+      context: ../src/web
+      dockerfile: ./Dockerfile
+      args:
+        APP_REQUIREMENT_FILE: '$APP_ENVIROMENT.txt'
+        APP_IMAGE_FROM: 'python:3.9-bullseye'
+    command: python3 -m debugpy --listen 0.0.0.0:11002 manage.py runserver
+    depends_on:
+      - db
+    volumes:
+      - ../src/web/appointments:/opt/appointments/web
+      - static_volume:/opt/appointments/static
+      - media_volume:/opt/appointments/media
+    ports:
+      - '11000:11000' # Django
+      - '11002:11002' # debug py
+  db:
+    build:
+      context: ../src/db
+      dockerfile: ./Dockerfile
+    ports:
+      - '11001:5432'
+    env_file:
+      - ./env/$APP_ENVIROMENT.env
+    volumes:
+      - postgres_volume:/var/lib/mysql
+      - ../src/db/scripts:/home/app/scripts
+    
+volumes:
+  postgres_volume:
+  static_volume:
+  media_volume:

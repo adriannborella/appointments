@@ -1,0 +1,1 @@
+pip freeze -r /cache/base.txt

@@ -1,0 +1,6 @@
+name: appointments
+services:
+  web:
+    entrypoint: ['/cache/entrypoint.sh']
+    env_file:
+      - ./env/$APP_ENVIROMENT.env

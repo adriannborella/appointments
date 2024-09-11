@@ -1,0 +1,58 @@
+image: google/cloud-sdk:438.0.0
+
+options:
+    docker: true
+
+definitions:
+    scripts:
+        - script:
+              &shared-script-env export COMPOSE_PROJECT_NAME=ap-prod;
+              export AP_COMMIT_VERSION=${BITBUCKET_COMMIT::7};
+              export AP_DOCKER_REGISTRY='adriannborella/';
+              export AP_WEB_IMAGE=$AP_DOCKER_REGISTRY'ap_web:'$AP_COMMIT_VERSION;
+              export AP_FRONT_IMAGE=$AP_DOCKER_REGISTRY'ap_front:'$AP_COMMIT_VERSION;
+              export AP_LB_IMAGE=$AP_DOCKER_REGISTRY'ap_lb:'$AP_COMMIT_VERSION;
+        - script: &install-docker-compose mkdir -p ~/.docker/cli-plugins;
+              curl -SL https://github.com/docker/compose/releases/download/v2.2.3/docker-compose-linux-x86_64 -o ~/.docker/cli-plugins/docker-compose;
+              chmod +x ~/.docker/cli-plugins/docker-compose;
+        - script: &login-docker-hub docker login -u adriannborella
+
+    steps:
+        - step: &build
+              name: Build
+              script:
+                  - *shared-script-env
+                  - *install-docker-compose
+                  - *login-docker-hub
+                  - cd devops
+                  - bash compose-ci.sh build
+                #   - ./compose-ci.sh up
+                #   - ./compose-ci.sh test
+                  - bash compose-ci.sh push-web
+                  - bash compose-ci.sh push-lb
+                  - bash compose-ci.sh down
+              services:
+                  - docker
+              caches:
+                  - docker
+
+    services:
+        docker:
+            memory: 1096
+
+pipelines:
+
+    tags:
+        # Build
+        v*:
+            - step: *build
+
+    branches:
+        # Build
+        qa:
+            - step: *build
+
+    custom:
+        # Build
+        build:
+            - step: *build

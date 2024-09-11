@@ -1,0 +1,41 @@
+services:
+  # front:
+  #   build:
+  #     context: ../../../src/client
+  #     dockerfile: ./Dockerfile
+  #   command: yarn start
+  #   env_file:
+  #     - ./front.env
+  #   # network_mode: host
+  #   ports:
+  #     - 11003:3000
+  #   volumes:
+  #     - ../../../src/client/src:/home/app/react
+  web:
+    image: $APP_WEB_IMAGE
+    build:
+      context: ../src/web
+      dockerfile: ./Dockerfile
+      args:
+        APP_REQUIREMENT_FILE: '$APP_ENVIROMENT.txt'
+        APP_IMAGE_FROM: 'python:3.9-bullseye'
+    command: python3 manage.py runserver
+    depends_on:
+      - db
+    volumes:
+      - static_volume:/opt/appointments/static
+      - media_volume:/opt/appointments/media
+  db:
+    image: $APP_DB_IMAGE
+    build:
+      context: ../src/db
+      dockerfile: ./Dockerfile
+    env_file:
+      - ./env/$APP_ENVIROMENT.env
+    volumes:
+      - postgres_volume:/var/lib/mysql
+    
+volumes:
+  postgres_volume:
+  static_volume:
+  media_volume:
