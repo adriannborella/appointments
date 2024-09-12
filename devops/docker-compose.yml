@@ -1,6 +1,13 @@
 name: appointments
 services:
+  front:
+    env_file:
+      - ./env/$APP_ENVIROMENT.env
   web:
     entrypoint: ['/cache/entrypoint.sh']
     env_file:
       - ./env/$APP_ENVIROMENT.env
+  lb:
+    depends_on:
+      - web
+      - front

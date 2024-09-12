@@ -9,6 +9,18 @@ It has 2 parameters
 * e = The enviroment name. Posible options [local - production - qa - ci]
 * c = command which is going to be executed
 
+## Front
+
+Install yarn
+Go to src/front/next
+
+```
+execute yarn # to install all dependencies
+```
+
+## LB
+
+You can access to the project in the port 11000 
 
 ## Config Debug
 

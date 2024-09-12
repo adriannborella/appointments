@@ -25,8 +25,8 @@ services:
     env_file:
       - ./web.env
     volumes:
-      - static_volume_prod:/opt/appointments/static
-      - media_volume_prod:/opt/appointments/media
+      - static_volume:/opt/appointments/static
+      - media_volume:/opt/appointments/media
     restart: always
   web_migrate:
     image: $AP_WEB_IMAGE
@@ -45,26 +45,26 @@ services:
     env_file:
       - ./web.env
     volumes:
-      - static_volume_prod:/opt/appointments/static
-      - media_volume_prod:/opt/appointments/media
+      - static_volume:/opt/appointments/static
+      - media_volume:/opt/appointments/media
   db:
     image: 'postgres:15.3-alpine'
     env_file:
       - ./db.env
     volumes:
-      - postgres_volume_prod:/var/lib/mysql
+      - postgres_volume:/var/lib/mysql
     restart: always
   lb:
     image: $AP_LB_IMAGE
     ports:
       - 11120:80
     volumes:
-      - static_volume_prod:/home/app/static
-      - media_volume_prod:/home/app/media
+      - static_volume:/home/app/static
+      - media_volume:/home/app/media
     depends_on:
       - web
     restart: always
 volumes:
-  postgres_volume_prod:
-  static_volume_prod:
-  media_volume_prod:
+  postgres_volume:
+  static_volume:
+  media_volume:
