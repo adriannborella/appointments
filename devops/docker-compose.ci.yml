@@ -1,16 +1,13 @@
 services:
-  # front:
-  #   build:
-  #     context: ../../../src/client
-  #     dockerfile: ./Dockerfile
-  #   command: yarn start
-  #   env_file:
-  #     - ./front.env
-  #   # network_mode: host
-  #   ports:
-  #     - 11003:3000
-  #   volumes:
-  #     - ../../../src/client/src:/home/app/react
+  front:
+    build:
+      context: ../src/front
+      dockerfile: ./Dockerfile
+    command: yarn dev
+    env_file:
+      - ./env/$APP_ENVIROMENT.env
+    volumes:
+      - ../src/front/next:/home/app/next/
   web:
     image: $APP_WEB_IMAGE
     build:

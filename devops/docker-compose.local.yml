@@ -2,7 +2,7 @@ services:
   front:
     build:
       context: ../src/front
-      dockerfile: ./Dockerfile.local
+      dockerfile: ./Dockerfile
     command: yarn dev
     env_file:
       - ./env/$APP_ENVIROMENT.env
