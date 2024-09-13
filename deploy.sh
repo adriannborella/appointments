@@ -16,12 +16,13 @@ then
   exit
 fi
 
-export APP_COMMIT_VERSION=$(git log -1 --pretty=format:%h)
+APP_COMMIT=$(git log -1 --pretty=format:%h)
 if [ "$ENVIROMENT" = "local" ]
 then
-    export APP_COMMIT_VERSION='latest'
+    APP_COMMIT='latest'
 fi
 
+export APP_COMMIT_VERSION=$APP_COMMIT
 export COMPOSE_PROJECT_NAME=ap_$ENVIROMENT
 export DOCKER_DEFAULT_PLATFORM=linux/amd64
 
@@ -35,4 +36,11 @@ export APP_DB_IMAGE=$AP_DOCKER_REGISTRY'ap-db:'$APP_COMMIT_VERSION
 
 printenv | grep APP
 
-echo docker compose -f devops/docker-compose.yml -f devops/docker-compose.$ENVIROMENT.yml $CMD_DOCKER
+if [ "$CMD_DOCKER" = "push-web" ] || [ "$CMD_DOCKER" = "push-lb" ]
+then
+    bash scripts/compose-ci.sh $CMD_DOCKER
+else
+    docker compose -f devops/docker-compose.yml -f devops/docker-compose.$ENVIROMENT.yml $CMD_DOCKER
+fi
+ 
+

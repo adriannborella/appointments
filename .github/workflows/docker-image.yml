@@ -23,7 +23,11 @@ jobs:
 
       - uses: actions/checkout@v4
       - name: Up docker services
-        run: bash deploy.sh -e ci -c up
+        run: bash deploy.sh -e ci -c 'up -d'
+      
+      - uses: actions/checkout@v4
+      - name: Test django
+        run: bash deploy.sh -e ci -c 'exec web python manage.py test'
       
 
   build:
