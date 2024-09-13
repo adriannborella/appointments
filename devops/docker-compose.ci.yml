@@ -31,6 +31,11 @@ services:
       - ./env/$APP_ENVIROMENT.env
     volumes:
       - postgres_volume:/var/lib/mysql
+  lb:
+    image: $APP_LB_IMAGE
+    build:
+      context: ../src/lb
+      dockerfile: ./Dockerfile
     
 volumes:
   postgres_volume:

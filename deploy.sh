@@ -35,4 +35,4 @@ export APP_DB_IMAGE=$AP_DOCKER_REGISTRY'ap-db:'$APP_COMMIT_VERSION
 
 printenv | grep APP
 
-docker compose -f devops/docker-compose.yml -f devops/docker-compose.$ENVIROMENT.yml $CMD_DOCKER
+echo docker compose -f devops/docker-compose.yml -f devops/docker-compose.$ENVIROMENT.yml $CMD_DOCKER
