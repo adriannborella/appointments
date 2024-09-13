@@ -1,6 +1,10 @@
 -r base.txt
 
 ipdb
+safety==3.2.7
+black==24.8.0
+bandit==1.7.9
+memestra==0.2.1
 coverage==5.5
 debugpy==1.6.6
 django-debug-toolbar==3.8.1
