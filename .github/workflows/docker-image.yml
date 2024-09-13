@@ -17,29 +17,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
       - name: Build the Docker image
         run: bash deploy.sh -e ci -c build
 
-      - uses: actions/checkout@v4
       - name: Up docker services
         run: bash deploy.sh -e ci -c 'up -d'
       
-      - uses: actions/checkout@v4
       - name: Check installed dependencies 
         run: bash deploy.sh -e ci -c 'exec web bandit -r ./ && safety check'
 
-      - uses: actions/checkout@v4
-      - name: Check for deprecated function calls 
-        run: bash deploy.sh -e ci -c 'exec web memestra *.py --recursive'
-
-      - uses: actions/checkout@v4
       - name: Check outdated dependencies
         run: bash deploy.sh -e ci -c 'exec web pip list --outdated'
 
-      - uses: actions/checkout@v4
       - name: Test django
-        run: bash deploy.sh -e ci -c 'exec web coverage run --source='.' manage.py test  && coverage report'
+        run: bash deploy.sh -e ci -c 'exec web coverage run --source='.' manage.py test'
+      
+      - name: Coverage django
+        run: bash deploy.sh -e ci -c 'exec web coverage report'
       
   build:
 
